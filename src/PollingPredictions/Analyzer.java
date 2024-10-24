@@ -4,6 +4,7 @@ package PollingPredictions;
     This class will perform statistical calculations and analyze data about candidates
  */
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
@@ -57,16 +58,20 @@ public class Analyzer extends CandidateInformation {
 
         for (String field : data) {
             String[] fields = field.split(String.valueOf(STANDARD_DELIMITER));
-            sum += Integer.parseInt(fields[2]);
-            count++;
+
+            try {
+                sum += Integer.parseInt(fields[2]);
+                ++count;
+            }
+            catch (NumberFormatException n) {
+                System.out.println(n.getMessage());
+            }
         }
 
-        if (count == 0) {
-            throw new IllegalArgumentException("Count must not be zero.");
-        }
-        else {
+        if (count == 0)
+            throw new IllegalArgumentException("Error: count must not be zero.");
+        else
             setCandidateAverage(sum / count);
-        }
 
         return(getCandidateAverage());
     }
@@ -93,7 +98,7 @@ public class Analyzer extends CandidateInformation {
                 String[] fields = field.split(String.valueOf(STANDARD_DELIMITER));
 
                 // [1] is candidate choice
-                if (fields[1].equals(candidate.candidate_last_name())) {
+                if (fields[1].equalsIgnoreCase(candidate.candidate_last_name())) {
                     setCandidatePoints(candidate.candidate_last_name(), points[i]);
                 }
             }
@@ -102,8 +107,10 @@ public class Analyzer extends CandidateInformation {
         int max = Integer.MIN_VALUE;
 
         for (Map.Entry<String, Integer> set : getCandidatePoints().entrySet()) {
-            if (set.getValue() > max)
+            if (set.getValue() > max) {
+                max = set.getValue();
                 winner = set.getKey();
+            }
         }
 
         if (winner.isEmpty())

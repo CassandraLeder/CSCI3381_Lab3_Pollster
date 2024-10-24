@@ -9,6 +9,8 @@ package PollingPredictions;
 
 */
 
+import java.io.IOException;
+
 public class Main {
     // location of text file containing list of urls
     final static String URLS = "src/urls.txt";
@@ -16,7 +18,10 @@ public class Main {
 
     public static void main(String[] args) {
         DataCollector dataCollector = new DataCollector(URLS);
-        dataCollector.collectData();
+        try (dataCollector.collectData()) {}
+        catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
         Analyzer analyzer = new Analyzer();
 
         System.out.println(analyzer.computeAverage(dataCollector.getData()));
