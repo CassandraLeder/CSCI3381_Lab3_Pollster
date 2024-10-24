@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 
-public class Analyzer extends CandidateInformation {
+public class Analyzer extends CandidateInformation implements PollStructure {
     private String likely_candidate;
     private Map<String, Integer> candidate_points;
     private int candidate_average;
@@ -57,7 +57,7 @@ public class Analyzer extends CandidateInformation {
         int count = 0;
 
         for (String field : data) {
-            String[] fields = field.split(String.valueOf(STANDARD_DELIMITER));
+            String[] fields = field.split(STANDARD_DELIMITER);
 
             try {
                 sum += Integer.parseInt(fields[2]);

@@ -67,14 +67,16 @@ public class DataCollector extends CandidateInformation implements PollStructure
         // for all files
         for (String file : file_names) {
             String contents = Files.readString(Path.of(file), StandardCharsets.UTF_8);
+            // every line seperated by newlines
+            List<String> lines = List.of(contents.split("\n"));
+            ArrayList<Object[]> ex_data = new ArrayList<>();
 
-            List<String> lines = List.of(contents.split(STANDARD_DELIMITER));
-            this.data = lines.stream()
+            lines.stream()
                     .skip(1) // skip header
-                    .map(line -> line.split(STANDARD_DELIMITER))
+                    .map(line -> line.split(STANDARD_DELIMITER)) // split into strings based on delimiter
                     .map(Parser::parseData)
-                    .collect(Collectors.joining(STANDARD_DELIMITER));
-
+                    .collect(ArrayList::new, ArrayList::add, ArrayList::addAll)
+                    .forEach(System.out::println);
         }
     }
 

@@ -18,7 +18,9 @@ public class Main {
 
     public static void main(String[] args) {
         DataCollector dataCollector = new DataCollector(URLS);
-        try (dataCollector.collectData()) {}
+        try {
+            dataCollector.collectData();
+        }
         catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
         }
