@@ -52,19 +52,22 @@ public class Analyzer extends CandidateInformation implements PollStructure {
     public int getStandardDeviation() { return standard_deviation; }
 
     // find average of the percentage that the candidate has
-    public int computeAverage(ArrayList<String> data) {
+    public int computeAverage(ArrayList<Object[]> data) {
         int sum = 0;
         int count = 0;
 
-        for (String field : data) {
-            String[] fields = field.split(STANDARD_DELIMITER);
+        for (Object[] lines : data) {
+            for (Object line : lines) {
+                if (line instanceof String line_str) {
+                    String[] fields = line_str.split(STANDARD_DELIMITER);
 
-            try {
-                sum += Integer.parseInt(fields[2]);
-                ++count;
-            }
-            catch (NumberFormatException n) {
-                System.out.println(n.getMessage());
+                    try {
+                        sum += Double.parseDouble(fields[final_data_headers.get("percentage")]);
+                        ++count;
+                    } catch (NumberFormatException n) {
+                        System.out.println(n.getMessage());
+                    }
+                }
             }
         }
 

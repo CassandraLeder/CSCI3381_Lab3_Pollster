@@ -7,6 +7,7 @@ package PollingPredictions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Parser extends CandidateInformation implements PollStructure {
@@ -30,13 +31,13 @@ public class Parser extends CandidateInformation implements PollStructure {
                 // add from data using original index of column
                 for (String val : new_data_headers.values()) {
 
-                    // if not last string, append comma, else don't
-                    if(!val.equals(STANDARD_COLUMNS[STANDARD_COLUMNS.length - 1]))
+                    // if not last column, append comma, else don't
+                    if (!val.equals(STANDARD_COLUMNS[STANDARD_COLUMNS.length - 1]))
                         new_data_string.append(data[original_data_headers.get(val)]).append(STANDARD_DELIMITER);
                     else
                         new_data_string.append(data[original_data_headers.get(val)]);
                 }
-                new_data.add(new_data.toString());
+                new_data.add(new_data_string.toString());
 
                 break; // get out of candidate loop
             }

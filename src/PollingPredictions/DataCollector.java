@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class DataCollector extends CandidateInformation implements PollStructure {
     // relevant information from polls
     // [0]: pollster name, [1]: candidate choice last name, [2]: percentage
-    private ArrayList<String> data;
+    private ArrayList<Object[]> data;
     private ArrayList<String> file_names;
 
     DataCollector(String url_location) {
@@ -62,24 +62,20 @@ public class DataCollector extends CandidateInformation implements PollStructure
 
     // collect data from csvs
     public void collectData() throws IOException {
-        StringBuilder new_data = new StringBuilder();
-
         // for all files
         for (String file : file_names) {
             String contents = Files.readString(Path.of(file), StandardCharsets.UTF_8);
             // every line seperated by newlines
             List<String> lines = List.of(contents.split("\n"));
-            ArrayList<Object[]> ex_data = new ArrayList<>();
 
-            lines.stream()
+            data = lines.stream()
                     .skip(1) // skip header
                     .map(line -> line.split(STANDARD_DELIMITER)) // split into strings based on delimiter
-                    .map(Parser::parseData)
-                    .collect(ArrayList::new, ArrayList::add, ArrayList::addAll)
-                    .forEach(System.out::println);
+                    .map(Parser::parseData) // parse data
+                    .collect(Collectors.toCollection(ArrayList::new)); // add to array
         }
     }
 
-    public ArrayList<String> getData() { return data; }
+    public ArrayList<Object[]> getData() { return data; }
     public ArrayList<String> getFileNames() { return file_names; }
 }
