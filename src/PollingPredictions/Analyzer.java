@@ -11,7 +11,7 @@ public class Analyzer extends CandidateInformation implements PollStructure {
     private Map<String, Double> candidate_average;
     private Map<String, Double> standard_deviation;
 
-    Analyzer() {
+    public Analyzer() {
         candidate_points = new HashMap<>();
         candidate_average = new HashMap<>();
         standard_deviation = new HashMap<>();

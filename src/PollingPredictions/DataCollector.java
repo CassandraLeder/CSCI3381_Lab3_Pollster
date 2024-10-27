@@ -25,7 +25,7 @@ public class DataCollector extends CandidateInformation implements PollStructure
     private ArrayList<Object[]> data;
     private ArrayList<String> file_names;
 
-    DataCollector(String url_location) {
+    public DataCollector(String url_location) {
         // initialize
         data = new ArrayList<>();
         file_names = new ArrayList<>();

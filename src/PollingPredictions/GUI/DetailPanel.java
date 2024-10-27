@@ -1,4 +1,15 @@
 package PollingPredictions.GUI;
+/*
+    Adds information related to the table of data
+ */
 
-public class DetailPanel {
+
+import javax.swing.*;
+
+public class DetailPanel extends JPanel implements GUIConstants  {
+    DetailPanel() {
+
+    }
+
+
 }

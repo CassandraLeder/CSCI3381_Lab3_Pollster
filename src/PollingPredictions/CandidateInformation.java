@@ -9,13 +9,13 @@ import java.util.List;
 
 public class CandidateInformation {
     // only real candidates worth looking at are Harris and Trump
-    protected final static CandidateProfile[] CANDIDATES = {new CandidateProfile("Kamala", "Harris",
+    public final static CandidateProfile[] CANDIDATES = {new CandidateProfile("Kamala", "Harris",
             "Tim", "Walz", "DEM", 16661),
             new CandidateProfile("Donald", "Trump",
                     "JD", "Vance", "REP", 16651)};
 
     // get a candidate profile
-    protected CandidateProfile getCandidateProfile(int candidate_id) {
+    public CandidateProfile getCandidateProfile(int candidate_id) {
 
         List<CandidateProfile> candidate = Arrays.stream(CANDIDATES)
                 .filter(s -> s.candidate_id() == candidate_id)

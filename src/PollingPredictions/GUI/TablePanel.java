@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static PollingPredictions.PollStructure.final_data_headers;
 
-public class TablePanel extends JPanel implements GUIConstants {
+public class TablePanel extends JScrollPane implements GUIConstants {
     public JTable data_table;
 
     TablePanel(ArrayList<Object[]> data) {
@@ -30,13 +30,15 @@ public class TablePanel extends JPanel implements GUIConstants {
         }
 
         // set up table
-        this.data_table = new JTable(table_data, columns);
+        data_table = new JTable(table_data, columns);
+        data_table.setBackground(BACKGROUND_COLOR);
+        data_table.setFont(DEFAULT_FONT);
         data_table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         data_table.setBounds(JTABLE_X, JTABLE_Y, JTABLE_WIDTH, JTABLE_HEIGHT);
 
-        // set up frame
-        this.setPreferredSize(TABLE_PANEL_DIMENSION);
-        this.add(data_table);
-        this.setVisible(true);
+        // set up panel
+        setPreferredSize(TABLE_PANEL_DIMENSION);
+        super.add(data_table);
+        setVisible(true);
     }
 }
