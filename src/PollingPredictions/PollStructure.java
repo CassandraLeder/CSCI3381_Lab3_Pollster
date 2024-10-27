@@ -23,6 +23,7 @@ public interface PollStructure {
             2, STANDARD_COLUMNS[2],
             3, STANDARD_COLUMNS[3]));
 
+    // what columns should look like when data is finished being parsed
     TreeMap<String,Integer> final_data_headers = new TreeMap<>(Map.of(STANDARD_COLUMNS[0], 0,
             STANDARD_COLUMNS[1], 1,
             STANDARD_COLUMNS[2], 2,

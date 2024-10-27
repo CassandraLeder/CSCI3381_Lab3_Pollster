@@ -4,108 +4,162 @@ package PollingPredictions;
     This class will perform statistical calculations and analyze data about candidates
  */
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Analyzer extends CandidateInformation implements PollStructure {
-    private String likely_candidate;
     private Map<String, Integer> candidate_points;
-    private int candidate_average;
-    private int standard_deviation;
+    private Map<String, Double> candidate_average;
+    private Map<String, Double> standard_deviation;
 
     Analyzer() {
-        likely_candidate = "";
         candidate_points = new HashMap<>();
-        candidate_average = 0;
-        standard_deviation = 0;
+        candidate_average = new HashMap<>();
+        standard_deviation = new HashMap<>();
     }
 
-    public void setLikelyCandidate(String likely_candidate) { this.likely_candidate = likely_candidate; }
+    // setters
     public void setCandidatePoints(String candidate_last_name, int num) {
-        boolean name_check_flag = true;
-
-        for (CandidateProfile candidate : CANDIDATES) {
-            if (candidate.candidate_last_name().equalsIgnoreCase(candidate_last_name)) {
-                name_check_flag = false;
-                break;
-            }
-        }
-
-        if (!name_check_flag)
-            throw new IllegalArgumentException("Error: candidate is not an option");
-
+        // error checking
+        if (!isCandidateLastNameValid(candidate_last_name))
+            throw new IllegalArgumentException("Name: " + candidate_last_name + " is not a valid last name");
         if (num < 0)
-            throw new IllegalArgumentException("Error: number of points must be a positive numbers");
+            throw new IllegalArgumentException("Error: number of points must be positive");
 
         this.candidate_points.putIfAbsent(candidate_last_name, num);
     }
-    public void setCandidateAverage(int candidate_average) { this.candidate_average = candidate_average; }
-    public void setStandardDeviation(int standard_deviation) { this.standard_deviation = standard_deviation; }
+
+    public void setCandidateAverage(String candidate_last_name, double candidate_average) {
+        // error checking
+        if (!isCandidateLastNameValid(candidate_last_name))
+            throw new IllegalArgumentException("Name: " + candidate_last_name + " is not a valid last name");
+        if (candidate_average <= 0)
+            throw new IllegalArgumentException("Error: candidate average must be greater than zero");
+
+        this.candidate_average.putIfAbsent(candidate_last_name, candidate_average);
+    }
+    public void setStandardDeviation(String candidate_last_name, double standard_deviation) {
+        // error checking
+        if (!isCandidateLastNameValid(candidate_last_name))
+            throw new IllegalArgumentException("Name: " + candidate_last_name + " is not a valid last name");
+        if (standard_deviation <= 0)
+            throw new IllegalArgumentException("Error: candidate average must be greater than zero");
+
+        this.standard_deviation.putIfAbsent(candidate_last_name, standard_deviation);
+    }
 
 
-    // getters/calculators
-    public String getLikelyCandidate() { return likely_candidate; }
+    // getters
     public Map<String, Integer> getCandidatePoints() { return candidate_points; }
-    public int getCandidateAverage() { return candidate_average; }
-    public int getStandardDeviation() { return standard_deviation; }
+    public Map<String, Double> getCandidateAverage() { return candidate_average; }
+    public Map<String, Double> getStandardDeviation() { return standard_deviation; }
+
+    /*
+        CALCULATORS!
+     */
 
     // find average of the percentage that the candidate has
-    public int computeAverage(ArrayList<Object[]> data) {
-        int sum = 0;
+    public Map<String,Double> computeAverage(int candidate_id, ArrayList<Object[]> data) {
+        double sum = 0;
         int count = 0;
 
+        // probably an easy way to do this with streams
         for (Object[] lines : data) {
             for (Object line : lines) {
                 if (line instanceof String line_str) {
                     String[] fields = line_str.split(STANDARD_DELIMITER);
 
-                    try {
-                        sum += Double.parseDouble(fields[final_data_headers.get("percentage")]);
-                        ++count;
-                    } catch (NumberFormatException n) {
-                        System.out.println(n.getMessage());
+                    if (Integer.parseInt(fields[final_data_headers.get("candidate id")]) == candidate_id) {
+                        try {
+                            sum += Double.parseDouble(fields[final_data_headers.get("percentage")]);
+                            ++count;
+                        } catch (NumberFormatException n) {
+                            System.out.println(n.getMessage());
+                        }
                     }
                 }
             }
         }
 
+
+        // avoiding dividing by zero
         if (count == 0)
             throw new IllegalArgumentException("Error: count must not be zero.");
         else
-            setCandidateAverage(sum / count);
+            setCandidateAverage(getCandidateProfile(candidate_id).candidate_last_name(),
+                    sum / count);
 
         return(getCandidateAverage());
     }
 
-    public int computeStandardDeviation() {
-        // add work here...
-        return 0;
-    }
+    public Map<String, Double> computeStandardDeviation(int candidate_id, ArrayList<Object[]> data) {
+        // find the mean associated with candidate id
+        double mean = getCandidateAverage().get(getCandidateProfile(candidate_id).candidate_last_name());
+        int count = 0;
+        ArrayList<Double> deviations = new ArrayList<>();
 
-    public String predictWinner(ArrayList<String> data) {
+        // find distance of each data point from the mean
+        for (Object[] lines : data) {
+            for (Object line : lines) {
+                if (line instanceof String line_str) {
+                    String[] fields = line_str.split(STANDARD_DELIMITER);
 
-        int[] points = new int[CANDIDATES.length];
-        int i = 0;
+                    if (Integer.parseInt(fields[final_data_headers.get("candidate id")]) == candidate_id) {
 
-        // initialize candidate points
-        for (CandidateProfile candidate : CANDIDATES) {
-            points[i] = 0;
-            ++i;
-            setCandidatePoints(candidate.candidate_last_name(), 0);
-        }
-
-        for (CandidateProfile candidate : CANDIDATES) {
-            for (String field : data) {
-                String[] fields = field.split(String.valueOf(STANDARD_DELIMITER));
-
-                // [1] is candidate choice
-                if (fields[1].equalsIgnoreCase(candidate.candidate_last_name())) {
-                    setCandidatePoints(candidate.candidate_last_name(), points[i]);
+                        // the distance of a data point from the mean squared
+                        deviations.add((Double.parseDouble(fields[final_data_headers.get("percentage")]) - mean)
+                                * (Double.parseDouble(fields[final_data_headers.get("percentage")]) - mean));
+                        ++count;
+                    }
                 }
             }
         }
+
+        // variance is the mean of deviation
+        double variance = 0;
+        for (Double deviation : deviations) {
+            variance += deviation;
+        }
+        variance /= count;
+
+        // std dev is sqrt(variance)
+        setStandardDeviation(getCandidateProfile(candidate_id).candidate_last_name(), Math.sqrt(variance));
+
+        return getStandardDeviation();
+    }
+
+    // count the total number of times a candidate has been predicted,
+    // that candidate must win according to the laws of nature and statistical bodies
+    public String guessWinner(ArrayList<Object[]> data) {
+
+        int[] points = new int[CANDIDATES.length];
+        int candidate_index = 0;
+
+        // initialize candidate points
+        for (CandidateProfile candidate : CANDIDATES) {
+            points[candidate_index] = 0;
+            ++candidate_index;
+            setCandidatePoints(candidate.candidate_last_name(), 0);
+        }
+
+        candidate_index = 0;
+
+        // repeated 3 times :^(
+        for (CandidateProfile candidate : CANDIDATES) {
+            for (Object line : data) {
+                if (line instanceof String line_str) {
+                    String[] fields = line_str.split(STANDARD_DELIMITER);
+
+                    // ugly
+                    if (fields[final_data_headers.get("candidate last name")]
+                            .equalsIgnoreCase(candidate.candidate_last_name())) {
+                        ++points[candidate_index];
+                    }
+                }
+            }
+            setCandidatePoints(candidate.candidate_last_name(), points[candidate_index]);
+            ++candidate_index;
+        }
+
         String winner = "";
         int max = Integer.MIN_VALUE;
 
@@ -120,5 +174,41 @@ public class Analyzer extends CandidateInformation implements PollStructure {
             throw new IllegalArgumentException("Error: no winner could be found.");
 
         return winner;
+    }
+
+    public String predictWinner() {
+        String winner = "";
+        double[] candidate_stats = new double[CANDIDATES.length];
+        int candidate_index = 0;
+        double max = Double.MIN_VALUE;
+
+        for (CandidateProfile candidate : CANDIDATES) {
+            candidate_stats[candidate_index] =
+                    getCandidateAverage().get(candidate.candidate_last_name())
+                    - getStandardDeviation().get(candidate.candidate_last_name());
+
+            if (candidate_stats[candidate_index] > max) {
+                max = candidate_stats[candidate_index];
+                winner = candidate.candidate_last_name();
+            }
+
+            ++candidate_index;
+        }
+
+        return(winner);
+    }
+
+    // not valid = false
+    private boolean isCandidateLastNameValid(String candidate_last_name) throws IllegalArgumentException {
+        boolean name_check_flag = false;
+
+        for (CandidateProfile candidate : CANDIDATES) {
+            if (candidate.candidate_last_name().equalsIgnoreCase(candidate_last_name)) {
+                name_check_flag = true;
+                break;
+            }
+        }
+
+        return(name_check_flag);
     }
 }

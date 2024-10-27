@@ -11,7 +11,7 @@ package PollingPredictions;
 
 import java.io.IOException;
 
-public class Main {
+public class Main extends CandidateInformation {
     // location of text file containing list of urls
     final static String URLS = "src/urls.txt";
 
@@ -26,6 +26,24 @@ public class Main {
         }
         Analyzer analyzer = new Analyzer();
 
-        System.out.println(analyzer.computeAverage(dataCollector.getData()));
+        for (CandidateProfile candidate : CANDIDATES) {
+            // print out the average for each candidate
+            System.out.println("Candidate " + candidate.candidate_first_name() +  " " + candidate.candidate_last_name()
+                    + " percent average is %" +
+                    analyzer.computeAverage(candidate.candidate_id(),
+                    dataCollector.getData()).get(candidate.candidate_last_name()));
+
+            // print out standard deviation for each candidate
+            System.out.println("Candidate " + candidate.candidate_first_name() + " " + candidate.candidate_last_name()
+                            + " standard deviation is " +
+                    analyzer.computeStandardDeviation(candidate.candidate_id(),
+                    dataCollector.getData()).get(candidate.candidate_last_name()));
+        }
+
+        System.out.println("Simplisticly we assume that the winner of the 2024 presidential election is " +
+                analyzer.guessWinner(dataCollector.getData()));
+
+        System.out.println("More accurately the president will be..... " +
+                analyzer.predictWinner());
     }
 }

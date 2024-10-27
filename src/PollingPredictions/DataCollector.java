@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class DataCollector extends CandidateInformation implements PollStructure {
     // relevant information from polls
-    // [0]: pollster name, [1]: candidate choice last name, [2]: percentage
+    // (see PollStructure to learn about the labeling of data's columns)
     private ArrayList<Object[]> data;
     private ArrayList<String> file_names;
 
@@ -33,9 +33,10 @@ public class DataCollector extends CandidateInformation implements PollStructure
     }
 
     // helper function for constructor
-    // downloads files from specified urls (urls.txt)
+    // downloads files from specified urls (urls.txt by default)
     private void downloadFiles(String url_location) {
         // try to create a new file_reader
+        // probably an easier way to do this with streams (just saying)
         try (BufferedReader file_reader = new BufferedReader(new FileReader(url_location))) {
             String url;
 
@@ -51,11 +52,11 @@ public class DataCollector extends CandidateInformation implements PollStructure
                     String url_name = "data/" + Parser.parseURL(url);
                     Files.copy(poll, Paths.get(url_name), StandardCopyOption.REPLACE_EXISTING);
                     file_names.add(url_name);
-                } catch (IOException e) {
+                } catch (IOException e) { // if url failed to open
                     System.out.println(e.getMessage());
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException e) { // if text file did not open
             System.out.println(e.getMessage());
         }
     }
@@ -64,10 +65,12 @@ public class DataCollector extends CandidateInformation implements PollStructure
     public void collectData() throws IOException {
         // for all files
         for (String file : file_names) {
+            // puts every line of csv into string contents
             String contents = Files.readString(Path.of(file), StandardCharsets.UTF_8);
-            // every line seperated by newlines
+            // every line is seperated by newlines
             List<String> lines = List.of(contents.split("\n"));
 
+            // parses data and adds to class' data variable
             data = lines.stream()
                     .skip(1) // skip header
                     .map(line -> line.split(STANDARD_DELIMITER)) // split into strings based on delimiter

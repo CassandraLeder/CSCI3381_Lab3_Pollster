@@ -1,19 +1,16 @@
 package PollingPredictions;
 
 /*
-    Parser parses a given url using its one method.
+    Parser parses a given url or data from a csv using its two methods.
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Parser extends CandidateInformation implements PollStructure {
     private final static String URL_DELIMITER = "/";
 
-    // parse data from csv based on wanted information
+    // parse data from csv based on desired information
+    // returns String[] because String[] needs to be returned for stream!
     public static String[] parseData(String[] data) {
         StringBuilder new_data_string = new StringBuilder();
         ArrayList<String> new_data = new ArrayList<>();
@@ -29,26 +26,28 @@ public class Parser extends CandidateInformation implements PollStructure {
 
                 // based on the correct order of columns for data array,
                 // add from data using original index of column
-                for (String val : new_data_headers.values()) {
+                for (String column : new_data_headers.values()) {
 
                     // if not last column, append comma, else don't
-                    if (!val.equals(STANDARD_COLUMNS[STANDARD_COLUMNS.length - 1]))
-                        new_data_string.append(data[original_data_headers.get(val)]).append(STANDARD_DELIMITER);
+                    if (!column.equals(STANDARD_COLUMNS[STANDARD_COLUMNS.length - 1]))
+                        // find data at the original headers subscript for a given column string
+                        new_data_string.append(data[original_data_headers.get(column)]).append(STANDARD_DELIMITER);
                     else
-                        new_data_string.append(data[original_data_headers.get(val)]);
+                        new_data_string.append(data[original_data_headers.get(column)]);
                 }
+                // add stringbuilder to arraylist
                 new_data.add(new_data_string.toString());
 
                 break; // get out of candidate loop
             }
         }
-
+        // return as String[]
         return (new_data.toArray(new String[new_data.size()]));
     }
 
     // for a given file download, find just its filename
     public static String parseURL(String full_url) {
         String[] parse = full_url.split(URL_DELIMITER);
-        return (parse[parse.length - 1]); // last element in URL should filename
+        return (parse[parse.length - 1]); // last element in URL should be filename
     }
 }
