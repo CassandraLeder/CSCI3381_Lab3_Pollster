@@ -1,4 +1,4 @@
-package PollingPredictions;
+package PollingPredictions.GUI;
 
 /*
     Holds the constants for Swing/AWT
@@ -26,11 +26,12 @@ public interface GUIConstants {
     // STATS PANEL
     Dimension STATS_PANEL_DIMENSION = new Dimension(FRAME_WIDTH / 2, FRAME_HEIGHT / 2);
 
-        // etceteron
+        // -> etceteron
+
     // CHART PANEL
     // jFreeChart and such
 
     // DETAIL PANEL
 
-        // yada yada....
+        // -> yada yada....
 }

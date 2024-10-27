@@ -29,9 +29,9 @@ public class Main extends CandidateInformation {
         for (CandidateProfile candidate : CANDIDATES) {
             // print out the average for each candidate
             System.out.println("Candidate " + candidate.candidate_first_name() +  " " + candidate.candidate_last_name()
-                    + " percent average is %" +
+                    + " percent average is " +
                     analyzer.computeAverage(candidate.candidate_id(),
-                    dataCollector.getData()).get(candidate.candidate_last_name()));
+                    dataCollector.getData()).get(candidate.candidate_last_name()) + "%");
 
             // print out standard deviation for each candidate
             System.out.println("Candidate " + candidate.candidate_first_name() + " " + candidate.candidate_last_name()

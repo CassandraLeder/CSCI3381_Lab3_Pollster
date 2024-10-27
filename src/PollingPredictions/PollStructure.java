@@ -29,6 +29,6 @@ public interface PollStructure {
             STANDARD_COLUMNS[2], 2,
             STANDARD_COLUMNS[3], 3));
 
-    // this should really be a char, but it's costly to do String.valueof() every time
+    // this should really be a char for clarity, but it's unnecessary/costly to do String.valueof() every time
     String STANDARD_DELIMITER = ",";
 }

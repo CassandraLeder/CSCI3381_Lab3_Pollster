@@ -27,7 +27,6 @@ public class CandidateInformation {
         if (candidate.size() > 1)
             throw new RuntimeException("Multiple candidate found");
 
-
         // size == 1
         return candidate.getFirst();
     }

@@ -22,8 +22,8 @@ public class Analyzer extends CandidateInformation implements PollStructure {
         // error checking
         if (!isCandidateLastNameValid(candidate_last_name))
             throw new IllegalArgumentException("Name: " + candidate_last_name + " is not a valid last name");
-        if (num < 0)
-            throw new IllegalArgumentException("Error: number of points must be positive");
+        if (num <= 0)
+            throw new IllegalArgumentException("Error: number of points must be greater than zero");
 
         this.candidate_points.putIfAbsent(candidate_last_name, num);
     }
@@ -134,11 +134,10 @@ public class Analyzer extends CandidateInformation implements PollStructure {
         int[] points = new int[CANDIDATES.length];
         int candidate_index = 0;
 
-        // initialize candidate points
+        // initialize candidate points (points will be updated
         for (CandidateProfile candidate : CANDIDATES) {
             points[candidate_index] = 0;
             ++candidate_index;
-            setCandidatePoints(candidate.candidate_last_name(), 0);
         }
 
         candidate_index = 0;
@@ -165,8 +164,8 @@ public class Analyzer extends CandidateInformation implements PollStructure {
 
         for (Map.Entry<String, Integer> set : getCandidatePoints().entrySet()) {
             if (set.getValue() > max) {
-                max = set.getValue();
-                winner = set.getKey();
+                max = set.getValue(); // points
+                winner = set.getKey(); // candidate last name
             }
         }
 
@@ -182,6 +181,7 @@ public class Analyzer extends CandidateInformation implements PollStructure {
         int candidate_index = 0;
         double max = Double.MIN_VALUE;
 
+        // find probable candidate based on mean - std dev
         for (CandidateProfile candidate : CANDIDATES) {
             candidate_stats[candidate_index] =
                     getCandidateAverage().get(candidate.candidate_last_name())
