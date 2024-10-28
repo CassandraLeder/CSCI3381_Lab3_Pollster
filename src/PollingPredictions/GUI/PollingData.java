@@ -25,7 +25,9 @@ public class PollingData extends JPanel implements GUIConstants {
     DetailPanel detailPanel;
 
 
+    // constructor that sets up all panels
     public PollingData() {
+        //setLayout(DEFAULT_LAYOUT_MANAGER);
         // download data files
         dataCollector = new DataCollector(URLS);
 
@@ -44,7 +46,7 @@ public class PollingData extends JPanel implements GUIConstants {
 
         // statspanel
         analyzer = new Analyzer();
-        statsPanels = new JPanel[CANDIDATES.length];
+        statsPanels = new JPanel[CANDIDATES.length + 1]; // +1 to include likely candidates
         int panel_iterator = 0;
 
         for (CandidateProfile candidate : CANDIDATES) {
@@ -57,20 +59,30 @@ public class PollingData extends JPanel implements GUIConstants {
             ++panel_iterator;
         }
 
-        // create detail panel
         String likely_winner1 = analyzer.guessWinner(data);
         String likely_winner2 = analyzer.predictWinner();
-        detailPanel = new DetailPanel(likely_winner1, likely_winner2);
+        statsPanels[panel_iterator] = new StatsPanel(likely_winner1, likely_winner2);
+
+        // create detail panel
+        detailPanel = new DetailPanel();
+
+
+        // create chart panel
+        chartPanel chartPanel = new chartPanel("Pie Chart", analyzer);
+        chartPanel.setVisible(true);
+        chartPanel.setSize(CHART_SIZE);
 
         // add all panels
         // add table panel
-        add(tablePanel.dataTable.getTableHeader(), BorderLayout.NORTH);
-        add(tablePanel.scrollPane, BorderLayout.CENTER);
+        add(tablePanel.dataTable.getTableHeader(), BorderLayout.PAGE_START);
+        add(tablePanel.scrollPane, BorderLayout.NORTH);
+        // add details panel
+        add(detailPanel, BorderLayout.CENTER);
         // add stats panels
         for (JPanel statPanel : statsPanels)
-            add(statPanel, BorderLayout.WEST);
-        // add details panel
-        add(detailPanel, BorderLayout.SOUTH);
+            add(statPanel, BorderLayout.SOUTH);
+
+        setBackground(BACKGROUND_COLOR);
         setVisible(true);
     }
 
@@ -83,9 +95,6 @@ public class PollingData extends JPanel implements GUIConstants {
         jFrame.setTitle(FRAME_TITLE);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        jFrame.getContentPane().setLayout(DEFAULT_LAYOUT_MANAGER);
-        jFrame.getContentPane().setBackground(BACKGROUND_COLOR);
-
 
         jFrame.getContentPane().add(new PollingData());
 

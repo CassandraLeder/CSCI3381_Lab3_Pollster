@@ -7,26 +7,20 @@ package PollingPredictions.GUI;
 import javax.swing.*;
 
 public class DetailPanel extends JPanel implements GUIConstants  {
-    JTextArea likelyCandidate1;
-    JTextArea likelyCandidate2;
+    JTextArea details;
 
-    DetailPanel(String likelyCandidate1, String likelyCandidate2) {
-        // set up panel
-        setPreferredSize(DETAIL_PANEL_DIMENSION);
+    DetailPanel() {
+        details = new JTextArea("The data from this table is gathered from a list of polls from ABC's Project 538. " +
+                "Only major party nominees are considered to narrow the data. " +
+                "Polls are considered regardless of partisan association. These results may not be accurate.");
 
-        // first likely candidate
-        this.likelyCandidate1 = new JTextArea("Based on a simplistic method the 2024 president elect will be " + likelyCandidate1);
-        this.likelyCandidate1.setSize(JTEXTBOX_SIZE, JTEXTBOX_SIZE);
-        this.likelyCandidate1.setFont(DEFAULT_FONT);
+        details.setFont(DEFAULT_FONT);
+        details.setSize(DETAIL_PANEL_DIMENSION);
+        details.setLineWrap(true);
+        details.setBackground(BACKGROUND_COLOR);
 
-        // second likely candidate
-        this.likelyCandidate2 = new JTextArea("Based on a more advanced method the 2024 president elect will be " + likelyCandidate2);
-        this.likelyCandidate2.setSize(JTEXTBOX_SIZE, JTEXTBOX_SIZE);
-        this.likelyCandidate2.setFont(DEFAULT_FONT);
-
-        super.add(this.likelyCandidate1);
-        super.add(this.likelyCandidate2);
-
+        add(details);
+        setBackground(BACKGROUND_COLOR);
         setVisible(true);
     }
 }
