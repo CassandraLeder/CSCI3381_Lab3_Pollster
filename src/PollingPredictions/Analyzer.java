@@ -143,18 +143,21 @@ public class Analyzer extends CandidateInformation implements PollStructure {
         candidate_index = 0;
 
         // repeated 3 times :^(
+        // for each candidate
         for (CandidateProfile candidate : CANDIDATES) {
-            for (Object line : data) {
-                if (line instanceof String line_str) {
-                    String[] fields = line_str.split(STANDARD_DELIMITER);
+            for (Object[] lines : data) {
+                for (Object line : lines) {
+                    if (line instanceof String line_str) {
+                        String[] fields = line_str.split(STANDARD_DELIMITER);
 
-                    // ugly
-                    if (fields[final_data_headers.get("candidate last name")]
-                            .equalsIgnoreCase(candidate.candidate_last_name())) {
-                        ++points[candidate_index];
+                        // if current candidate's name equals current data's candidate name
+                        if (fields[final_data_headers.get("candidate last name")]
+                                .equalsIgnoreCase(candidate.candidate_last_name()))
+                            ++points[candidate_index]; // add up points
                     }
                 }
             }
+            // update candidate points
             setCandidatePoints(candidate.candidate_last_name(), points[candidate_index]);
             ++candidate_index;
         }

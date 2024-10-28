@@ -5,10 +5,12 @@ package PollingPredictions.GUI;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.Plot;
 
+import java.awt.*;
+
 public class ChartPanel extends JFreeChart implements GUIConstants {
     JFreeChart chart;
 
-    ChartPanel() {
-        chart = new JFreeChart("Average Percentage for Each Candidate", new Plot());
+    public ChartPanel(String title, Font titleFont, Plot plot, boolean createLegend) {
+        super(title, titleFont, plot, createLegend);
     }
 }

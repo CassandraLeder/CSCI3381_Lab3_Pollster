@@ -33,17 +33,22 @@ public class PollingData implements GUIConstants {
         JFrame jFrame = new JFrame();
         PollingData default_obj = new PollingData(jFrame);
 
+        // download data files
         DataCollector dataCollector = new DataCollector(URLS);
-        // to prevent unncessary returning of data
+
+        // parse data and put into data variable
+        try {
+            dataCollector.collectData();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+        // to prevent unnecessary returning of data
         ArrayList<Object[]> data = dataCollector.getData();
 
-        // try to collect data
-        try  { dataCollector.collectData(); }
-        catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
         // tablepanel
-        TablePanel tablePanel = new TablePanel(dataCollector.getData());
+        PollTableModel pollTableModel = new PollTableModel(data);
+        TablePanel tablePanel = new TablePanel(pollTableModel);
 
         // statspanel
         Analyzer analyzer = new Analyzer();
@@ -54,20 +59,26 @@ public class PollingData implements GUIConstants {
             // get should be used on returned data because the maps are numbers associated with a candidate's last name
             double mean = analyzer.computeAverage(candidate.candidate_id(), data).get(candidate.candidate_last_name());
             double standard_deviation = analyzer.computeStandardDeviation(candidate.candidate_id(), data).get(candidate.candidate_last_name());
-            String likely_winner1 = analyzer.guessWinner(data);
-            String likely_winner2 = analyzer.predictWinner();
 
-            statsPanels[panel_iterator] = new StatsPanel(candidate.candidate_id(), mean, standard_deviation,
-                    likely_winner1, likely_winner2);
+            statsPanels[panel_iterator] = new StatsPanel(candidate.candidate_id(), mean, standard_deviation);
 
             ++panel_iterator;
         }
 
-        // add panels
+        // create detail panel
+        String likely_winner1 = analyzer.guessWinner(data);
+        String likely_winner2 = analyzer.predictWinner();
+        DetailPanel detailPanel = new DetailPanel(likely_winner1, likely_winner2);
+
+        // add all panels
+        // add table panel
+        jFrame.getContentPane().add(tablePanel);
+        // add stats panels
         for (JPanel statPanel : statsPanels)
             jFrame.getContentPane().add(statPanel);
+        // add details panel
+        jFrame.getContentPane().add(detailPanel);
 
-        jFrame.getContentPane().add(tablePanel);
         jFrame.setVisible(true);
         jFrame.pack();
     }

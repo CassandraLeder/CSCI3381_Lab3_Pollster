@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 public interface PollStructure {
     // prevent making typos by rewriting twice
-    String[] STANDARD_COLUMNS = {"pollster name", "chosen candidate last name", "candidate id", "percentage"};
+    String[] STANDARD_COLUMNS = {"pollster name", "candidate last name", "candidate id", "percentage"};
 
     // standard columns for header
     TreeMap<String, Integer> original_data_headers = new TreeMap<>(Map.of(STANDARD_COLUMNS[0], 2,
