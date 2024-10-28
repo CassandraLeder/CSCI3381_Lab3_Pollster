@@ -7,6 +7,7 @@ package PollingPredictions.GUI;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static PollingPredictions.PollStructure.*;
 
@@ -22,12 +23,23 @@ public class PollTableModel implements TableModel {
         column_count = COLUMNS.length;
         row_count = data.size();
 
+        // get ready to convert ArrayList<Object[]> data into Object[][] this.data
         this.data = new Object[data.size()][COLUMNS.length];
 
-        // copy data
-        for (int i = 0; i < data.size(); i++)
-            this.data[i] = data.get(i);
+        // copy from data into this.data
+        for (int i = 0; i < data.size(); i++) {
+            // if object is a string array
+            if (data.get(i) instanceof String[] buffer) {
+                // parse based on comma, [] still present in first and last string
+                String[] fields = Arrays.toString(buffer).split(STANDARD_DELIMITER);
 
+                // remove [] from first and last string
+                fields[0] = fields[0].replace("[", "");
+                fields[fields.length - 1] = fields[fields.length - 1].replace("]", "");
+
+                System.arraycopy(fields, 0, this.data[i], 0, fields.length);
+            }
+        }
         listeners = new ArrayList<>();
     }
 
@@ -38,7 +50,7 @@ public class PollTableModel implements TableModel {
     @Override
     public String getColumnName(int column) { return new_data_headers.get(column); }
     @Override
-    public Class<?> getColumnClass(int columnIndex) { return null; }
+    public Class<?> getColumnClass(int columnIndex) { return getValueAt(0, columnIndex).getClass(); }
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) { return false; }
 
@@ -50,12 +62,8 @@ public class PollTableModel implements TableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
 
     @Override
-    public void addTableModelListener(TableModelListener l) {
-
-    }
+    public void addTableModelListener(TableModelListener l) { listeners.add(l); }
 
     @Override
-    public void removeTableModelListener(TableModelListener l) {
-
-    }
+    public void removeTableModelListener(TableModelListener l) { listeners.remove(l); }
 }

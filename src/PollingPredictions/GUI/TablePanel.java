@@ -5,7 +5,7 @@ package PollingPredictions.GUI;
  */
 
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.table.TableColumn;
 
 public class TablePanel extends JScrollPane implements GUIConstants {
     public JTable dataTable;
@@ -14,17 +14,22 @@ public class TablePanel extends JScrollPane implements GUIConstants {
     TablePanel(PollTableModel data) {
         // set up table
         dataTable = new JTable();
-        dataTable.setModel(data);
-        dataTable.setFont(DEFAULT_FONT);
+        dataTable.setModel(data);;
+
+        for (int column_index = 0; column_index < dataTable.getColumnCount(); column_index++) {
+            TableColumn column = dataTable.getColumnModel().getColumn(column_index);
+            column.sizeWidthToFit();
+        }
 
         scrollPane = new JScrollPane(dataTable);
         scrollPane.setPreferredSize(SCROLL_PANE_DIMENSION);
         dataTable.setFillsViewportHeight(true);
 
+
         // set up panel
-        setPreferredSize(TABLE_PANEL_DIMENSION);
-        setBackground(BACKGROUND_COLOR);
-        super.add(dataTable);
+        super.setPreferredSize(TABLE_PANEL_DIMENSION);
+        super.setBackground(BACKGROUND_COLOR);
+        super.add(scrollPane);
         setVisible(true);
     }
 }
