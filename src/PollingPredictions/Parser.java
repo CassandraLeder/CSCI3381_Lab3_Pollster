@@ -4,6 +4,7 @@ package PollingPredictions;
     Parser parses a given url or data from a csv using its two methods.
  */
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Parser extends CandidateInformation implements PollStructure {
@@ -41,8 +42,12 @@ public class Parser extends CandidateInformation implements PollStructure {
                 break; // get out of candidate loop
             }
         }
+
         // return as String[]
-        return (new_data.toArray(new String[new_data.size()]));
+        if (new_data_string.isEmpty())
+            return new String[0];
+        else
+            return (new_data.toArray(new String[new_data.size()]));
     }
 
     // for a given file download, find just its filename

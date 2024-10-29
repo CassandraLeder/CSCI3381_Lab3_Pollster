@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,8 @@ public class DataCollector extends CandidateInformation implements PollStructure
                     .skip(1) // skip header
                     .map(line -> line.split(STANDARD_DELIMITER)) // split into strings based on delimiter
                     .map(Parser::parseData) // parse data
-                    .collect(Collectors.toCollection(ArrayList::new)); // add to array
+                    .filter(parsed_data -> parsed_data.length > 0) // filter out empty strings
+                    .collect(Collectors.toCollection(ArrayList::new));
         }
     }
 

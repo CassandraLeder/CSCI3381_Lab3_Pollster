@@ -6,8 +6,6 @@ package PollingPredictions.GUI;
 import javax.swing.*;
 import PollingPredictions.CandidateProfile;
 import PollingPredictions.CandidateInformation;
-
-import java.awt.*;
 import java.util.Formatter;
 
 public class StatsPanel extends JPanel implements GUIConstants {
@@ -57,13 +55,13 @@ public class StatsPanel extends JPanel implements GUIConstants {
     // this constructor is to prevent likely candidates being displayed more than once (other constructor runs more than once)
     StatsPanel(String likelyCandidate1, String likelyCandidate2) {
         // first likely candidate
-        this.likelyCandidate1 = new JTextArea("Based on a simplistic method the 2024 president elect will be " + likelyCandidate1);
+        this.likelyCandidate1 = new JTextArea("Based on a simplistic method the 2024 president elect will be " + likelyCandidate1 + ".");
         this.likelyCandidate1.setSize(JTEXTBOX_DIMENSION);
         this.likelyCandidate1.setFont(DEFAULT_FONT);
         this.likelyCandidate1.setBackground(BACKGROUND_COLOR);
 
         // second likely candidate
-        this.likelyCandidate2 = new JTextArea("Based on a more advanced method the 2024 president elect will be " + likelyCandidate2);
+        this.likelyCandidate2 = new JTextArea("Based on a more advanced method the 2024 president elect will be " + likelyCandidate2 + ".");
         this.likelyCandidate2.setSize(JTEXTBOX_DIMENSION);
         this.likelyCandidate2.setFont(DEFAULT_FONT);
         this.likelyCandidate2.setBackground(BACKGROUND_COLOR);

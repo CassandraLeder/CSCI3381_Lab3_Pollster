@@ -151,7 +151,7 @@ public class Analyzer extends CandidateInformation implements PollStructure {
                         String[] fields = line_str.split(STANDARD_DELIMITER);
 
                         // if current candidate's name equals current data's candidate name
-                        if (fields[final_data_headers.get("candidate last name")]
+                        if (fields[final_data_headers.get("chosen candidate last name")]
                                 .equalsIgnoreCase(candidate.candidate_last_name()))
                             ++points[candidate_index]; // add up points
                     }

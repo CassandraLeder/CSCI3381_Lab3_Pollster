@@ -27,7 +27,6 @@ public class PollingData extends JPanel implements GUIConstants {
 
     // constructor that sets up all panels
     public PollingData() {
-        //setLayout(DEFAULT_LAYOUT_MANAGER);
         // download data files
         dataCollector = new DataCollector(URLS);
 
@@ -64,7 +63,7 @@ public class PollingData extends JPanel implements GUIConstants {
         statsPanels[panel_iterator] = new StatsPanel(likely_winner1, likely_winner2);
 
         // create detail panel
-        detailPanel = new DetailPanel();
+        detailPanel = new DetailPanel(data, tablePanel.dataTable);
 
 
         // create chart panel
@@ -76,6 +75,9 @@ public class PollingData extends JPanel implements GUIConstants {
         // add table panel
         add(tablePanel.dataTable.getTableHeader(), BorderLayout.PAGE_START);
         add(tablePanel.scrollPane, BorderLayout.NORTH);
+        for (JCheckBox checkBox : tablePanel.checkBoxes) {
+            add(checkBox, BorderLayout.CENTER);
+        }
         // add details panel
         add(detailPanel, BorderLayout.CENTER);
         // add stats panels

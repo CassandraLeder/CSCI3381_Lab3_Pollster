@@ -4,8 +4,10 @@ package PollingPredictions.GUI;
     Creates the logic for the JTable that displays our polling data
  */
 
+import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -40,6 +42,7 @@ public class PollTableModel implements TableModel {
                 System.arraycopy(fields, 0, this.data[i], 0, fields.length);
             }
         }
+
         listeners = new ArrayList<>();
     }
 
@@ -66,4 +69,26 @@ public class PollTableModel implements TableModel {
 
     @Override
     public void removeTableModelListener(TableModelListener l) { listeners.remove(l); }
+
+    // this function could be more efficient/general
+    public void filter(ArrayList<JCheckBox> checkBoxes, TableRowSorter<TableModel> sorter) {
+        ArrayList<RowFilter<Object, Object>> filters = new ArrayList<>();
+        RowFilter<TableModel, Object> filter = null;
+
+        // only show HarrisX polls
+        if (checkBoxes.getFirst().isSelected()) {
+            filters.add(RowFilter.regexFilter("HarrisX"));
+        } // only show percentages greater than 50%
+        else if (checkBoxes.get(1).isSelected()) {
+            filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, 50));
+        }
+        // only show polls that predict trump will win
+        else if (checkBoxes.getLast().isSelected()) {
+            filters.add(RowFilter.regexFilter("Trump"));
+        }
+
+        RowFilter<TableModel, Object> groupFilter = RowFilter.orFilter(filters);
+        sorter.setRowFilter(groupFilter);
+        sorter.sort();
+    }
 }
